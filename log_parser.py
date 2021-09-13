@@ -17,7 +17,6 @@
 # ...
 #
 # Входные параметры: файл для анализа, файл результата
-# Требования к коду: он должен быть готовым к расширению функциональности. Делать сразу на классах.
 
 
 class LogParser:
@@ -29,7 +28,7 @@ class LogParser:
         self.lasts = last
 
     def opening(self):
-
+        """читаем файл, выбираем нобхдимые символы"""
         with open(self.file_name, "r", encoding='cp1251') as file:
             for line in file:
                 if "NOK" in line:
@@ -39,42 +38,44 @@ class LogParser:
                         self.minute[line[self.count:self.lasts]] = 1
 
     def saved(self, out_file_name=None):
+        """записываем файл"""
         with open(out_file_name, 'w', encoding='utf8') as files:
             for time, date in self.minute.items():
                 files.write('{}]: {}\n'.format(time, date))
 
     def run(self):
+        """сохраняем в файл"""
         self.opening()
         self.saved(out_file_name="parser.txt")
 
 
 class Minute(LogParser):
+    """сртируем по минутам"""
     def __init__(self, file_name):
         super().__init__(file_name, against=0, last=17)
 
 
 class Hour(LogParser):
-
+    """сортируем по часам"""
     def __init__(self, file_name):
         super().__init__(file_name, against=0, last=14)
 
 
 class Month(LogParser):
-
+    """сортируем по месяцам"""
     def __init__(self, file_name):
         super().__init__(file_name, against=0, last=5)
 
 
-minute = Minute(file_name="events.txt")
-minute.run()
-hour = Hour(file_name="events.txt")
-hour.run()
-month = Month(file_name="events.txt")
-month.run()
+if __name__ == '__main__':   
+    minute = Minute(file_name="events.txt")
+    minute.run()
+    hour = Hour(file_name="events.txt")
+    hour.run()
+    month = Month(file_name="events.txt")
+    month.run()
 
 # После выполнения первого этапа нужно сделать группировку событий
 #  - по часам
 #  - по месяцу
 #  - по году
-# Для этого пригодится шаблон проектирование "Шаблонный метод" см https://goo.gl/Vz4828
-#зачет!
